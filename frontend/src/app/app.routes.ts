@@ -7,10 +7,11 @@ import { Usuarios } from './modules/usuarios/usuarios';
 import { Prestamos } from './modules/prestamos/prestamos';
 
 export const routes: Routes = [
-    {
+  {
     path: '',
     component: Main,
     children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard },
       { path: 'autores', component: Autores },
       { path: 'libros', component: Libros },

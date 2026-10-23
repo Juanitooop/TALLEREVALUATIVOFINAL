@@ -1,1 +1,44 @@
-<p>libros works!</p>
+<h1>Libros</h1>
+
+<p>
+  <button (click)="listar(0)">Listar</button>
+  <button (click)="listar(pagina() - 1)" [disabled]="pagina() == 0">Anterior</button>
+  <button (click)="listar(pagina() + 1)" [disabled]="pagina() + 1 >= totalPaginas()">Siguiente</button>
+  <span>pagina {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+</p>
+
+<p>
+  buscar: <input type="text" [(ngModel)]="texto" />
+  <button (click)="buscar()">Buscar por titulo o autor</button>
+</p>
+
+<p>
+  id: <input type="number" [(ngModel)]="id" />
+  <button (click)="buscarUno()">Buscar uno</button>
+  <button (click)="eliminar()">Eliminar</button>
+</p>
+
+<p>
+  <textarea rows="3" cols="90" [(ngModel)]="cuerpo"></textarea>
+  <br />
+  <button (click)="guardar()">Guardar</button>
+</p>
+
+<table border="1">
+  <tr>
+    <th>id</th>
+    <th>titulo</th>
+    <th>isbn</th>
+    <th>anio</th>
+    <th>autor</th>
+  </tr>
+  @for (libro of libros(); track libro.id) {
+    <tr>
+      <td>{{ libro.id }}</td>
+      <td>{{ libro.titulo }}</td>
+      <td>{{ libro.isbn }}</td>
+      <td>{{ libro.anio }}</td>
+      <td>{{ libro.autor?.nombre }} {{ libro.autor?.apellido }}</td>
+    </tr>
+  }
+</table>
