@@ -1,0 +1,59 @@
+:root {
+  color-scheme: light;
+
+  /* Spacing */
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* Type scale: fixed, 1.2 */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.2rem;
+  --text-xl: 1.44rem;
+  --text-2xl: 1.728rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 120ms;
+
+  /* Surfaces: Terrazzo, off-white */
+  --color-paper: oklch(96% 0.009 82);
+  --color-paper-2: oklch(92% 0.012 82);
+  --color-plate: oklch(99.5% 0.003 82);
+  --color-ink: oklch(16% 0.006 60);
+  --color-ink-2: oklch(27% 0.006 60);
+  --color-muted: oklch(46% 0.01 60);
+  --color-rule: oklch(81% 0.012 80);
+  --color-accent: oklch(53% 0.15 38);
+  --color-accent-ink: oklch(99.5% 0.003 82);
+  --color-row-hover: oklch(91% 0.035 45);
+  --color-focus: oklch(50% 0.16 38);
+
+  /* Faces */
+  --font-display: "Syne", ui-sans-serif, sans-serif;
+  --font-body: "Onest", ui-sans-serif, sans-serif;
+  --font-outlier: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Structure */
+  --radius: 0;
+  --rule-hair: 1px;
+  --rule-bar: 2px;
+  --tracking-display: -0.02em;
+  --display-weight: 700;
+  --container: 1280px;
+  --gutter: 32px;
+  --control-h: 40px;
+}
+
+@media (max-width: 40rem) {
+  :root {
+    --gutter: 16px;
+    --text-2xl: 1.44rem;
+  }
+}
