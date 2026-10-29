@@ -29,6 +29,7 @@
       <th>ISBN</th>
       <th>Año</th>
       <th>Autor</th>
+      <th></th>
     </tr>
     @for (libro of libros(); track libro.id) {
       <tr>
@@ -37,7 +38,33 @@
         <td>{{ libro.isbn }}</td>
         <td>{{ libro.anio }}</td>
         <td>{{ libro.autor?.nombre }} {{ libro.autor?.apellido }}</td>
+        <td><button (click)="ver(libro)">Ver</button></td>
       </tr>
     }
   </table>
 </div>
+
+@if (seleccionado(); as libro) {
+  <section class="detalle">
+    <h2>{{ libro.titulo }}</h2>
+
+    <dl>
+      <dt>ISBN</dt>
+      <dd>{{ libro.isbn }}</dd>
+
+      <dt>Año</dt>
+      <dd>{{ libro.anio }}</dd>
+
+      <dt>Autor</dt>
+      <dd>{{ libro.autor?.nombre }} {{ libro.autor?.apellido }}</dd>
+
+      <dt>Nacionalidad</dt>
+      <dd>{{ libro.autor?.nacionalidad }}</dd>
+
+      <dt>Nacimiento</dt>
+      <dd>{{ libro.autor?.fechaNacimiento }}</dd>
+    </dl>
+
+    <button (click)="cerrar()">Cerrar</button>
+  </section>
+}

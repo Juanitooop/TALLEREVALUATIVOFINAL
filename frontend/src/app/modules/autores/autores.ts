@@ -12,6 +12,7 @@ import { AutoresService } from '../../services/autores';
 export class Autores implements OnInit {
   autores = signal<any[]>([]);
   respuesta = signal<any>(null);
+  seleccionado = signal<any>(null);
   pagina = signal(0);
   totalPaginas = signal(0);
   id = 1;
@@ -24,6 +25,7 @@ export class Autores implements OnInit {
   }
 
   listar(numero: number): void {
+    this.seleccionado.set(null);
     this.autoresService.listar(numero).subscribe((resultado: any) => {
       this.autores.set(resultado.content);
       this.pagina.set(resultado.number);
@@ -36,6 +38,14 @@ export class Autores implements OnInit {
     this.autoresService.buscarUno(this.id).subscribe((resultado: any) => {
       this.respuesta.set(resultado);
     });
+  }
+
+  ver(autor: any): void {
+    this.seleccionado.set(autor);
+  }
+
+  cerrar(): void {
+    this.seleccionado.set(null);
   }
 
   guardar(): void {

@@ -12,6 +12,7 @@ import { LibrosService } from '../../services/libros';
 export class Libros implements OnInit {
   libros = signal<any[]>([]);
   respuesta = signal<any>(null);
+  seleccionado = signal<any>(null);
   pagina = signal(0);
   totalPaginas = signal(0);
   id = 1;
@@ -25,6 +26,7 @@ export class Libros implements OnInit {
   }
 
   listar(numero: number): void {
+    this.seleccionado.set(null);
     this.librosService.listar(numero).subscribe((resultado: any) => {
       this.libros.set(resultado.content);
       this.pagina.set(resultado.number);
@@ -34,6 +36,7 @@ export class Libros implements OnInit {
   }
 
   buscar(): void {
+    this.seleccionado.set(null);
     this.librosService.buscar(this.texto, 0).subscribe((resultado: any) => {
       this.libros.set(resultado.content);
       this.pagina.set(resultado.number);
@@ -46,6 +49,14 @@ export class Libros implements OnInit {
     this.librosService.buscarUno(this.id).subscribe((resultado: any) => {
       this.respuesta.set(resultado);
     });
+  }
+
+  ver(libro: any): void {
+    this.seleccionado.set(libro);
+  }
+
+  cerrar(): void {
+    this.seleccionado.set(null);
   }
 
   guardar(): void {

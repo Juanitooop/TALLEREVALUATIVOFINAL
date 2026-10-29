@@ -25,6 +25,7 @@
       <th>Apellido</th>
       <th>Nacionalidad</th>
       <th>Fecha de nacimiento</th>
+      <th></th>
     </tr>
     @for (autor of autores(); track autor.id) {
       <tr>
@@ -33,7 +34,27 @@
         <td>{{ autor.apellido }}</td>
         <td>{{ autor.nacionalidad }}</td>
         <td>{{ autor.fechaNacimiento }}</td>
+        <td><button (click)="ver(autor)">Ver</button></td>
       </tr>
     }
   </table>
 </div>
+
+@if (seleccionado(); as autor) {
+  <section class="detalle">
+    <h2>{{ autor.nombre }} {{ autor.apellido }}</h2>
+
+    <dl>
+      <dt>Nacionalidad</dt>
+      <dd>{{ autor.nacionalidad }}</dd>
+
+      <dt>Fecha de nacimiento</dt>
+      <dd>{{ autor.fechaNacimiento }}</dd>
+
+      <dt>ID</dt>
+      <dd>{{ autor.id }}</dd>
+    </dl>
+
+    <button (click)="cerrar()">Cerrar</button>
+  </section>
+}
