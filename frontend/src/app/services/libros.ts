@@ -9,8 +9,8 @@ export class LibrosService {
 
   constructor(private http: HttpClient) {}
 
-  listar(pagina: number) {
-    return this.http.get(this.url + '?page=' + pagina + '&size=10');
+  listar(pagina: number, size = 10) {
+    return this.http.get(this.url + '?page=' + pagina + '&size=' + size);
   }
 
   buscar(texto: string, pagina: number) {
