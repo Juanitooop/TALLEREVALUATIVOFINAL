@@ -1,1 +1,33 @@
-<p>dashboard works!</p>
+<h1>{{ auth.rol() === 'ADMIN' ? 'Panel de administración' : 'Biblioteca' }}</h1>
+
+<p class="intro">
+  @if (auth.rol() === 'ADMIN') {
+    Resumen del catálogo y acceso directo a la gestión de cada entidad.
+  } @else {
+    Consultá el catálogo y solicitá préstamos desde la sección Préstamos.
+  }
+</p>
+
+<div class="tarjetas">
+  <a class="tarjeta" routerLink="/libros">
+    <span class="numero">{{ libros() }}</span>
+    <span class="etiqueta">Libros</span>
+  </a>
+
+  <a class="tarjeta" routerLink="/autores">
+    <span class="numero">{{ autores() }}</span>
+    <span class="etiqueta">Autores</span>
+  </a>
+
+  @if (auth.rol() === 'ADMIN') {
+    <a class="tarjeta" routerLink="/usuarios">
+      <span class="numero">{{ usuarios() }}</span>
+      <span class="etiqueta">Usuarios</span>
+    </a>
+  }
+
+  <a class="tarjeta" routerLink="/prestamos">
+    <span class="numero">{{ prestamos() }}</span>
+    <span class="etiqueta">Préstamos</span>
+  </a>
+</div>

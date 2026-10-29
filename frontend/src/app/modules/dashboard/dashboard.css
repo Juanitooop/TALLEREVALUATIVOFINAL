@@ -1,0 +1,41 @@
+.intro {
+  max-width: 60ch;
+  margin-bottom: var(--space-xl);
+  color: var(--color-muted);
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding: var(--space-lg);
+  border-top: var(--rule-bar) solid var(--color-ink);
+  background: var(--color-plate);
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: background var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+}
+
+.tarjeta:hover {
+  border-top-color: var(--color-accent);
+  background: var(--color-paper-2);
+}
+
+.numero {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+}
+
+.etiqueta {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
