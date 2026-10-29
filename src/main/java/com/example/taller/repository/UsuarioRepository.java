@@ -5,6 +5,9 @@
 package com.example.taller.repository;
 
 import com.example.taller.entity.Usuario;
+
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +24,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
     @Query("select u from Usuario u where lower(u.nombre) like lower(concat('%', :texto, '%')) "
             + "or lower(u.username) like lower(concat('%', :texto, '%'))")
     Page<Usuario> buscar(@Param("texto") String texto, Pageable pageable);
+
+    Optional<Usuario> findByEmailIgnoreCase(String email);
 }

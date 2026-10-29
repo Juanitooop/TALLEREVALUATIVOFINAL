@@ -5,8 +5,10 @@ import { Autores } from './modules/autores/autores';
 import { Libros } from './modules/libros/libros';
 import { Usuarios } from './modules/usuarios/usuarios';
 import { Prestamos } from './modules/prestamos/prestamos';
+import { Login } from './modules/login/login';
 
 export const routes: Routes = [
+  { path: 'login', component: Login },
   {
     path: '',
     component: Main,

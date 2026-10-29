@@ -1,0 +1,27 @@
+.login {
+  max-width: 24rem;
+  margin-inline: auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  font-size: var(--text-sm);
+}
+
+input {
+  width: 100%;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+}
