@@ -6,18 +6,20 @@ import { Libros } from './modules/libros/libros';
 import { Usuarios } from './modules/usuarios/usuarios';
 import { Prestamos } from './modules/prestamos/prestamos';
 import { Login } from './modules/login/login';
+import { authGuard, adminGuard } from './guards/auth';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   {
     path: '',
     component: Main,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard },
       { path: 'autores', component: Autores },
       { path: 'libros', component: Libros },
-      { path: 'usuarios', component: Usuarios },
+      { path: 'usuarios', component: Usuarios, canActivate: [adminGuard] },
       { path: 'prestamos', component: Prestamos },
     ],
   },
