@@ -233,3 +233,37 @@ app-dashboard p {
     align-items: stretch;
   }
 }
+
+/* Boton de accion dentro de una tabla */
+.tabla button {
+  min-height: 28px;
+  padding: 0 var(--space-sm);
+}
+
+/* Panel de detalle: lo comparten libros y autores */
+.detalle {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  border-top: var(--rule-bar) solid var(--color-ink);
+  background: var(--color-plate);
+}
+
+.detalle h2 {
+  margin-bottom: var(--space-md);
+}
+
+.detalle dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-xs) var(--space-lg);
+  margin: 0 0 var(--space-lg);
+}
+
+.detalle dt {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.detalle dd {
+  margin: 0;
+}
