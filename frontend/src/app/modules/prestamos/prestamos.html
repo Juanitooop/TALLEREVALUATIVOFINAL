@@ -1,11 +1,11 @@
 <h1>Préstamos</h1>
 
 @if (auth.rol() === 'LECTOR') {
-  <form (ngSubmit)="registrar()">
+  <form #prestamoForm="ngForm" (ngSubmit)="registrar()">
     <label>
       Libro
       <select name="libro" [(ngModel)]="libroId" required>
-        <option [ngValue]="null">Elegí un libro</option>
+        <option [ngValue]="null">Selecciona un libro</option>
         @for (libro of libros(); track libro.id) {
           <option [ngValue]="libro.id">{{ libro.titulo }}</option>
         }
@@ -22,7 +22,7 @@
       <input type="date" name="fechaDevolucion" [(ngModel)]="fechaDevolucion" />
     </label>
 
-    <button class="principal" type="submit">Registrar préstamo</button>
+    <button class="principal" type="submit" [disabled]="prestamoForm.invalid">Registrar préstamo</button>
   </form>
 
   @if (aviso()) {
@@ -33,7 +33,7 @@
 <p>
   <button (click)="listar(pagina() - 1)" [disabled]="pagina() == 0">Anterior</button>
   <button (click)="listar(pagina() + 1)" [disabled]="pagina() + 1 >= totalPaginas()">Siguiente</button>
-  <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+  <span>Página {{ totalPaginas() ? pagina() + 1 : 0 }} de {{ totalPaginas() }}</span>
 </p>
 
 <div class="tabla">
@@ -56,7 +56,7 @@
         <td>{{ prestamo.fechaDevolucion }}</td>
         <td>{{ prestamo.devuelto ? 'Sí' : 'No' }}</td>
         <td class="acciones">
-          @if (!prestamo.devuelto) {
+          @if (!prestamo.devuelto && (auth.rol() === 'ADMIN' || prestamo.usuarioId === auth.id())) {
             <button (click)="devolver(prestamo)">Devolver</button>
           }
           @if (auth.rol() === 'ADMIN') {

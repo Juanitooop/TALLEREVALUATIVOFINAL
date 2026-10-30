@@ -1,62 +1,76 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
 import { AutoresService } from '../../services/autores';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-autores',
-  imports: [FormsModule, JsonPipe],
+  imports: [FormsModule],
   templateUrl: './autores.html',
   styleUrl: './autores.css',
 })
 export class Autores implements OnInit {
+  private servicio = inject(AutoresService);
+  auth = inject(Auth);
   autores = signal<any[]>([]);
-  respuesta = signal<any>(null);
-  seleccionado = signal<any>(null);
   pagina = signal(0);
   totalPaginas = signal(0);
-  id = 1;
-  cuerpo = '{"nombre":"Gabriel","apellido":"Garcia Marquez","nacionalidad":"Colombiana","fechaNacimiento":"1927-03-06"}';
+  aviso = signal('');
+  seleccionado = signal<any>(null);
+  formulario = { id: null as number | null, nombre: '', apellido: '', nacionalidad: '', fechaNacimiento: '' };
 
-  constructor(private autoresService: AutoresService) {}
 
-  ngOnInit(): void {
-    this.listar(0);
-  }
+  ngOnInit(): void { this.listar(0); }
 
   listar(numero: number): void {
-    this.seleccionado.set(null);
-    this.autoresService.listar(numero).subscribe((resultado: any) => {
-      this.autores.set(resultado.content);
-      this.pagina.set(resultado.number);
-      this.totalPaginas.set(resultado.totalPages);
-      this.respuesta.set(resultado);
+    const peticion = this.servicio.listar(numero);
+    peticion.subscribe({
+      next: (resultado: any) => {
+        this.autores.set(resultado.content);
+        this.pagina.set(resultado.number);
+        this.totalPaginas.set(resultado.totalPages);
+      },
+      error: () => this.aviso.set('No se pudo cargar la lista. Revisa la conexión y la sesión.'),
     });
   }
 
-  buscarUno(): void {
-    this.autoresService.buscarUno(this.id).subscribe((resultado: any) => {
-      this.respuesta.set(resultado);
-    });
-  }
-
-  ver(autor: any): void {
-    this.seleccionado.set(autor);
-  }
-
-  cerrar(): void {
+  nuevo(): void {
+    this.formulario = { id: null as number | null, nombre: '', apellido: '', nacionalidad: '', fechaNacimiento: '' };
     this.seleccionado.set(null);
+  }
+
+  editar(registro: any): void {
+    this.formulario = {
+      id: registro.id,
+      nombre: registro.nombre ?? '',
+      apellido: registro.apellido ?? '',
+      nacionalidad: registro.nacionalidad ?? '',
+      fechaNacimiento: registro.fechaNacimiento ?? '',
+    };
+    this.aviso.set('Editando el registro ' + registro.id);
   }
 
   guardar(): void {
-    this.autoresService.guardar(JSON.parse(this.cuerpo)).subscribe(() => {
-      this.listar(0);
+    const datos = { ...this.formulario, fechaNacimiento: this.formulario.fechaNacimiento || null };
+    this.servicio.guardar(datos).subscribe({
+      next: () => {
+        this.nuevo();
+        this.aviso.set('Registro guardado.');
+        this.listar(0);
+      },
+      error: () => this.aviso.set('No se pudo guardar. Revisa los campos.'),
     });
   }
 
-  eliminar(): void {
-    this.autoresService.eliminar(this.id).subscribe(() => {
-      this.listar(0);
+  eliminar(id: number): void {
+    if (!confirm('¿Eliminar el registro ' + id + '?')) return;
+    this.servicio.eliminar(id).subscribe({
+      next: () => {
+        this.nuevo();
+        this.aviso.set('Registro eliminado.');
+        this.listar(0);
+      },
+      error: () => this.aviso.set('No se pudo eliminar. Puede tener registros relacionados o no tener permisos.'),
     });
   }
 }

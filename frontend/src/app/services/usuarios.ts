@@ -14,7 +14,7 @@ export class UsuariosService {
   }
 
   buscar(texto: string, pagina: number) {
-    return this.http.get(this.url + '/buscar?texto=' + texto + '&page=' + pagina + '&size=10');
+    return this.http.get(this.url + '/buscar?texto=' + encodeURIComponent(texto) + '&page=' + pagina + '&size=10');
   }
 
   buscarUno(id: number) {

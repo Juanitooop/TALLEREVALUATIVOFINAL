@@ -1,70 +1,77 @@
 <h1>Libros</h1>
-
-<p>
-  <button (click)="listar(pagina() - 1)" [disabled]="pagina() == 0">Anterior</button>
+<form class="toolbar" (ngSubmit)="buscar()">
+  <label>Título o autor<input type="text" name="busqueda" [(ngModel)]="texto" /></label>
+  <button type="submit">Buscar</button>
+  <button type="button" (click)="texto = ''; buscar()">Ver todos</button>
+</form>
+@if (auth.rol() === 'ADMIN') {
+  <form #datosForm="ngForm" (ngSubmit)="guardar()">
+    <h2>{{ formulario.id ? 'Editar registro ' + formulario.id : 'Nuevo registro' }}</h2>
+    <p>Consulta el ID del autor en la sección Autores.</p>
+    <div class="campos">
+      <label>Título
+        <input type="text" name="titulo" [(ngModel)]="formulario.titulo" required />
+      </label>
+      <label>ISBN
+        <input type="text" name="isbn" [(ngModel)]="formulario.isbn" />
+      </label>
+      <label>Año
+        <input type="number" name="anio" [(ngModel)]="formulario.anio" min="1" />
+      </label>
+      <label>ID del autor
+        <input type="number" name="autorId" [(ngModel)]="formulario.autorId" required min="1" />
+      </label>
+    </div>
+    <div class="acciones">
+      <button type="submit" class="principal" [disabled]="datosForm.invalid">Guardar</button>
+      <button type="button" (click)="nuevo()">Limpiar / cancelar</button>
+    </div>
+  </form>
+}
+@if (aviso()) { <p class="aviso" role="status">{{ aviso() }}</p> }
+<p class="toolbar">
+  <button (click)="listar(pagina() - 1)" [disabled]="pagina() === 0">Anterior</button>
+  <span>Página {{ totalPaginas() ? pagina() + 1 : 0 }} de {{ totalPaginas() }}</span>
   <button (click)="listar(pagina() + 1)" [disabled]="pagina() + 1 >= totalPaginas()">Siguiente</button>
-  <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
 </p>
-
-<p>
-  Buscar: <input type="text" [(ngModel)]="texto" />
-  <button (click)="buscar()">Buscar por título o autor</button>
-</p>
-
-<p>
-  ID: <input type="number" [(ngModel)]="id" />
-  <button (click)="eliminar()">Eliminar</button>
-</p>
-
-<p>
-  <textarea rows="3" cols="90" [(ngModel)]="cuerpo"></textarea>
-  <button class="principal" (click)="guardar()">Guardar o Actualizar</button>
-</p>
-
 <div class="tabla">
   <table>
-    <tr>
-      <th>ID</th>
-      <th>Título</th>
-      <th>ISBN</th>
-      <th>Año</th>
-      <th>Autor</th>
-      <th></th>
-    </tr>
-    @for (libro of libros(); track libro.id) {
-      <tr>
-        <td>{{ libro.id }}</td>
-        <td>{{ libro.titulo }}</td>
-        <td>{{ libro.isbn }}</td>
-        <td>{{ libro.anio }}</td>
-        <td>{{ libro.autor?.nombre }} {{ libro.autor?.apellido }}</td>
-        <td><button (click)="ver(libro)">Ver</button></td>
-      </tr>
-    }
+    <thead><tr><th>ID</th><th>Título</th><th>ISBN</th><th>Año</th><th>ID del autor</th><th>Autor</th><th>Acciones</th></tr></thead>
+    <tbody>
+      @for (registro of libros(); track registro.id) {
+        <tr>
+          <td>{{ registro.id }}</td>
+          <td>{{ registro.titulo }}</td>
+          <td>{{ registro.isbn }}</td>
+          <td>{{ registro.anio }}</td>
+          <td>{{ registro.autorId }}</td>
+          <td>{{ registro.autor?.nombre }} {{ registro.autor?.apellido }}</td>
+          <td>
+            <button (click)="seleccionado.set(registro)">Ver detalle</button>
+            @if (auth.rol() === 'ADMIN') {
+              <button (click)="editar(registro)">Editar</button>
+              <button (click)="eliminar(registro.id)">Eliminar</button>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="7">No hay registros para mostrar.</td></tr>
+      }
+    </tbody>
   </table>
 </div>
-
-@if (seleccionado(); as libro) {
+@if (seleccionado(); as registro) {
   <section class="detalle">
-    <h2>{{ libro.titulo }}</h2>
-
+    <h2>Detalle</h2>
     <dl>
-      <dt>ISBN</dt>
-      <dd>{{ libro.isbn }}</dd>
-
-      <dt>Año</dt>
-      <dd>{{ libro.anio }}</dd>
-
-      <dt>Autor</dt>
-      <dd>{{ libro.autor?.nombre }} {{ libro.autor?.apellido }}</dd>
-
-      <dt>Nacionalidad</dt>
-      <dd>{{ libro.autor?.nacionalidad }}</dd>
-
-      <dt>Nacimiento</dt>
-      <dd>{{ libro.autor?.fechaNacimiento }}</dd>
+      <dt>Título</dt><dd>{{ registro.titulo }}</dd>
+      <dt>ISBN</dt><dd>{{ registro.isbn }}</dd>
+      <dt>Año</dt><dd>{{ registro.anio }}</dd>
+      <dt>ID del autor</dt><dd>{{ registro.autorId }}</dd>
+      <dt>Autor</dt><dd>{{ registro.autor?.nombre }} {{ registro.autor?.apellido }}</dd>
+      <dt>Nacionalidad</dt><dd>{{ registro.autor?.nacionalidad }}</dd>
+      <dt>Nacimiento</dt><dd>{{ registro.autor?.fechaNacimiento }}</dd>
     </dl>
-
-    <button (click)="cerrar()">Cerrar</button>
+    <button (click)="seleccionado.set(null)">Cerrar</button>
   </section>
 }

@@ -1,60 +1,71 @@
 <h1>Autores</h1>
 
+@if (auth.rol() === 'ADMIN') {
+  <form #datosForm="ngForm" (ngSubmit)="guardar()">
+    <h2>{{ formulario.id ? 'Editar registro ' + formulario.id : 'Nuevo registro' }}</h2>
+
+    <div class="campos">
+      <label>Nombre
+        <input type="text" name="nombre" [(ngModel)]="formulario.nombre" required />
+      </label>
+      <label>Apellido
+        <input type="text" name="apellido" [(ngModel)]="formulario.apellido" required />
+      </label>
+      <label>Nacionalidad
+        <input type="text" name="nacionalidad" [(ngModel)]="formulario.nacionalidad" />
+      </label>
+      <label>Fecha de nacimiento
+        <input type="date" name="fechaNacimiento" [(ngModel)]="formulario.fechaNacimiento" />
+      </label>
+    </div>
+    <div class="acciones">
+      <button type="submit" class="principal" [disabled]="datosForm.invalid">Guardar</button>
+      <button type="button" (click)="nuevo()">Limpiar / cancelar</button>
+    </div>
+  </form>
+}
+@if (aviso()) { <p class="aviso" role="status">{{ aviso() }}</p> }
 <p class="toolbar">
-  <button (click)="listar(pagina() - 1)" [disabled]="pagina() == 0">Anterior</button>
+  <button (click)="listar(pagina() - 1)" [disabled]="pagina() === 0">Anterior</button>
+  <span>Página {{ totalPaginas() ? pagina() + 1 : 0 }} de {{ totalPaginas() }}</span>
   <button (click)="listar(pagina() + 1)" [disabled]="pagina() + 1 >= totalPaginas()">Siguiente</button>
-  <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
 </p>
-
-<p>
-  <label for="autor-id">ID:</label>
-  <input id="autor-id" type="number" [(ngModel)]="id" />
-  <button (click)="eliminar()">Eliminar</button>
-</p>
-
-<p>
-  <textarea aria-label="Datos del autor" rows="3" cols="90" [(ngModel)]="cuerpo"></textarea>
-  <button class="principal" (click)="guardar()">Guardar o Actualizar</button>
-</p>
-
 <div class="tabla">
   <table>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Nacionalidad</th>
-      <th>Fecha de nacimiento</th>
-      <th></th>
-    </tr>
-    @for (autor of autores(); track autor.id) {
-      <tr>
-        <td>{{ autor.id }}</td>
-        <td>{{ autor.nombre }}</td>
-        <td>{{ autor.apellido }}</td>
-        <td>{{ autor.nacionalidad }}</td>
-        <td>{{ autor.fechaNacimiento }}</td>
-        <td><button (click)="ver(autor)">Ver</button></td>
-      </tr>
-    }
+    <thead><tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Nacionalidad</th><th>Fecha de nacimiento</th><th>Acciones</th></tr></thead>
+    <tbody>
+      @for (registro of autores(); track registro.id) {
+        <tr>
+          <td>{{ registro.id }}</td>
+          <td>{{ registro.nombre }}</td>
+          <td>{{ registro.apellido }}</td>
+          <td>{{ registro.nacionalidad }}</td>
+          <td>{{ registro.fechaNacimiento }}</td>
+
+          <td>
+            <button (click)="seleccionado.set(registro)">Ver detalle</button>
+            @if (auth.rol() === 'ADMIN') {
+              <button (click)="editar(registro)">Editar</button>
+              <button (click)="eliminar(registro.id)">Eliminar</button>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6">No hay registros para mostrar.</td></tr>
+      }
+    </tbody>
   </table>
 </div>
-
-@if (seleccionado(); as autor) {
+@if (seleccionado(); as registro) {
   <section class="detalle">
-    <h2>{{ autor.nombre }} {{ autor.apellido }}</h2>
-
+    <h2>Detalle</h2>
     <dl>
-      <dt>Nacionalidad</dt>
-      <dd>{{ autor.nacionalidad }}</dd>
+      <dt>Nombre</dt><dd>{{ registro.nombre }}</dd>
+      <dt>Apellido</dt><dd>{{ registro.apellido }}</dd>
+      <dt>Nacionalidad</dt><dd>{{ registro.nacionalidad }}</dd>
+      <dt>Fecha de nacimiento</dt><dd>{{ registro.fechaNacimiento }}</dd>
 
-      <dt>Fecha de nacimiento</dt>
-      <dd>{{ autor.fechaNacimiento }}</dd>
-
-      <dt>ID</dt>
-      <dd>{{ autor.id }}</dd>
     </dl>
-
-    <button (click)="cerrar()">Cerrar</button>
+    <button (click)="seleccionado.set(null)">Cerrar</button>
   </section>
 }

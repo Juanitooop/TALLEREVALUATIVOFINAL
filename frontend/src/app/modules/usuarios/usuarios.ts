@@ -1,62 +1,84 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
 import { UsuariosService } from '../../services/usuarios';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-usuarios',
-  imports: [FormsModule, JsonPipe],
+  imports: [FormsModule],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
 })
 export class Usuarios implements OnInit {
+  private servicio = inject(UsuariosService);
+  auth = inject(Auth);
   usuarios = signal<any[]>([]);
-  respuesta = signal<any>(null);
   pagina = signal(0);
   totalPaginas = signal(0);
-  id = 1;
-  texto = 'alber';
-  cuerpo = '{"nombre":"Nuevo Lector","username":"nuevolector","email":"nuevo@correo.com","password":"12345678","rol":"LECTOR","estado":"ACTIVO"}';
+  aviso = signal('');
+  seleccionado = signal<any>(null);
+  formulario = { id: null as number | null, nombre: '', username: '', email: '', password: '', rol: 'LECTOR', estado: 'ACTIVO' };
+  texto = '';
+  filtro = '';
 
-  constructor(private usuariosService: UsuariosService) {}
-
-  ngOnInit(): void {
-    this.listar(0);
-  }
+  ngOnInit(): void { this.listar(0); }
 
   listar(numero: number): void {
-    this.usuariosService.listar(numero).subscribe((resultado: any) => {
-      this.usuarios.set(resultado.content);
-      this.pagina.set(resultado.number);
-      this.totalPaginas.set(resultado.totalPages);
-      this.respuesta.set(resultado);
+    const peticion = this.filtro ? this.servicio.buscar(this.filtro, numero) : this.servicio.listar(numero);
+    peticion.subscribe({
+      next: (resultado: any) => {
+        this.usuarios.set(resultado.content);
+        this.pagina.set(resultado.number);
+        this.totalPaginas.set(resultado.totalPages);
+      },
+      error: () => this.aviso.set('No se pudo cargar la lista. Revisa la conexión y la sesión.'),
     });
   }
 
   buscar(): void {
-    this.usuariosService.buscar(this.texto, 0).subscribe((resultado: any) => {
-      this.usuarios.set(resultado.content);
-      this.pagina.set(resultado.number);
-      this.totalPaginas.set(resultado.totalPages);
-      this.respuesta.set(resultado);
-    });
+    this.filtro = this.texto.trim();
+    this.listar(0);
   }
 
-  buscarUno(): void {
-    this.usuariosService.buscarUno(this.id).subscribe((resultado: any) => {
-      this.respuesta.set(resultado);
-    });
+  nuevo(): void {
+    this.formulario = { id: null as number | null, nombre: '', username: '', email: '', password: '', rol: 'LECTOR', estado: 'ACTIVO' };
+    this.seleccionado.set(null);
+  }
+
+  editar(registro: any): void {
+    this.formulario = {
+      id: registro.id,
+      nombre: registro.nombre ?? '',
+      username: registro.username ?? '',
+      email: registro.email ?? '',
+      password: '',
+      rol: registro.rol ?? '',
+      estado: registro.estado ?? '',
+    };
+    this.aviso.set('Editando el registro ' + registro.id);
   }
 
   guardar(): void {
-    this.usuariosService.guardar(JSON.parse(this.cuerpo)).subscribe(() => {
-      this.listar(0);
+    const datos = { ...this.formulario };
+    this.servicio.guardar(datos).subscribe({
+      next: () => {
+        this.nuevo();
+        this.aviso.set('Registro guardado.');
+        this.listar(0);
+      },
+      error: () => this.aviso.set('No se pudo guardar. Revisa los campos y que el email no esté repetido.'),
     });
   }
 
-  eliminar(): void {
-    this.usuariosService.eliminar(this.id).subscribe(() => {
-      this.listar(0);
+  eliminar(id: number): void {
+    if (!confirm('¿Eliminar el registro ' + id + '?')) return;
+    this.servicio.eliminar(id).subscribe({
+      next: () => {
+        this.nuevo();
+        this.aviso.set('Registro eliminado.');
+        this.listar(0);
+      },
+      error: () => this.aviso.set('No se pudo eliminar. Puede tener registros relacionados o no tener permisos.'),
     });
   }
 }

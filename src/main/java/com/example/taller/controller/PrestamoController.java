@@ -52,12 +52,25 @@ public class PrestamoController {
     
     @PostMapping
     public void saveOrUpdate(@Valid @RequestBody PrestamoDto prestamoDto, JwtAuthenticationToken jwt){
-        if (prestamoDto.getId() == null) {
-            Usuario usuario = usuarioRepository.findByEmailIgnoreCase(jwt.getToken().getSubject())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
-            
-            if (usuario.getRol() == Rol.LECTOR) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(jwt.getToken().getSubject())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+
+        if (usuario.getRol() == Rol.LECTOR) {
+            if (prestamoDto.getId() == null) {
                 prestamoDto.setUsuarioId(usuario.getId());
+                prestamoDto.setDevuelto(false);
+            } else {
+                // Un lector solo puede devolver un prestamo suyo.
+                var actual = prestamoService.getPrestamo(prestamoDto.getId())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prestamo no encontrado"));
+                if (!usuario.getId().equals(actual.getUsuarioId())) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "El prestamo pertenece a otro usuario");
+                }
+                prestamoDto.setLibroId(actual.getLibroId());
+                prestamoDto.setUsuarioId(actual.getUsuarioId());
+                prestamoDto.setFechaPrestamo(actual.getFechaPrestamo());
+                prestamoDto.setDevuelto(true);
+                prestamoDto.setFechaDevolucion(java.time.LocalDate.now());
             }
         }
         

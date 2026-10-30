@@ -1,45 +1,69 @@
 <h1>Usuarios</h1>
+<form class="toolbar" (ngSubmit)="buscar()">
+  <label>Nombre o nombre de usuario<input type="text" name="busqueda" [(ngModel)]="texto" /></label>
+  <button type="submit">Buscar</button>
+  <button type="button" (click)="texto = ''; buscar()">Ver todos</button>
+</form>
+@if (auth.rol() === 'ADMIN') {
+  <form #datosForm="ngForm" (ngSubmit)="guardar()">
+    <h2>{{ formulario.id ? 'Editar registro ' + formulario.id : 'Nuevo registro' }}</h2>
 
-<p>
-  <button (click)="listar(pagina() - 1)" [disabled]="pagina() == 0">Anterior</button>
+    <div class="campos">
+      <label>Nombre
+        <input type="text" name="nombre" [(ngModel)]="formulario.nombre" required />
+      </label>
+      <label>Nombre de usuario
+        <input type="text" name="username" [(ngModel)]="formulario.username" required />
+      </label>
+      <label>Email
+        <input type="email" name="email" [(ngModel)]="formulario.email" required />
+      </label>
+      <label>Contraseña (también al editar)
+        <input type="password" name="password" [(ngModel)]="formulario.password" required />
+      </label>
+      <label>Rol
+        <select name="rol" [(ngModel)]="formulario.rol"><option value="LECTOR">LECTOR</option><option value="ADMIN">ADMIN</option></select>
+      </label>
+      <label>Estado
+        <select name="estado" [(ngModel)]="formulario.estado"><option value="ACTIVO">ACTIVO</option><option value="INACTIVO">INACTIVO</option></select>
+      </label>
+    </div>
+    <div class="acciones">
+      <button type="submit" class="principal" [disabled]="datosForm.invalid">Guardar</button>
+      <button type="button" (click)="nuevo()">Limpiar / cancelar</button>
+    </div>
+  </form>
+}
+@if (aviso()) { <p class="aviso" role="status">{{ aviso() }}</p> }
+<p class="toolbar">
+  <button (click)="listar(pagina() - 1)" [disabled]="pagina() === 0">Anterior</button>
+  <span>Página {{ totalPaginas() ? pagina() + 1 : 0 }} de {{ totalPaginas() }}</span>
   <button (click)="listar(pagina() + 1)" [disabled]="pagina() + 1 >= totalPaginas()">Siguiente</button>
-  <span>Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
 </p>
-
-<p>
-  Buscar: <input type="text" [(ngModel)]="texto" />
-  <button (click)="buscar()">Buscar por nombre o username</button>
-</p>
-
-<p>
-  ID: <input type="number" [(ngModel)]="id" />
-  <button (click)="eliminar()">Eliminar</button>
-</p>
-
-<p>
-  <textarea rows="3" cols="90" [(ngModel)]="cuerpo"></textarea>
-  <button class="principal" (click)="guardar()">Guardar o Actualizar</button>
-</p>
-
 <div class="tabla">
   <table>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Rol</th>
-      <th>Estado</th>
-    </tr>
-    @for (usuario of usuarios(); track usuario.id) {
-      <tr>
-        <td>{{ usuario.id }}</td>
-        <td>{{ usuario.nombre }}</td>
-        <td>{{ usuario.username }}</td>
-        <td>{{ usuario.email }}</td>
-        <td>{{ usuario.rol }}</td>
-        <td>{{ usuario.estado }}</td>
-      </tr>
-    }
+    <thead><tr><th>ID</th><th>Nombre</th><th>Nombre de usuario</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+      @for (registro of usuarios(); track registro.id) {
+        <tr>
+          <td>{{ registro.id }}</td>
+          <td>{{ registro.nombre }}</td>
+          <td>{{ registro.username }}</td>
+          <td>{{ registro.email }}</td>
+          <td>{{ registro.rol }}</td>
+          <td>{{ registro.estado }}</td>
+
+          <td>
+
+            @if (auth.rol() === 'ADMIN') {
+              <button (click)="editar(registro)">Editar</button>
+              <button (click)="eliminar(registro.id)">Eliminar</button>
+            }
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="7">No hay registros para mostrar.</td></tr>
+      }
+    </tbody>
   </table>
 </div>

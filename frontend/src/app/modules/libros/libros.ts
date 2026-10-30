@@ -1,73 +1,82 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { JsonPipe } from '@angular/common';
 import { LibrosService } from '../../services/libros';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-libros',
-  imports: [FormsModule, JsonPipe],
+  imports: [FormsModule],
   templateUrl: './libros.html',
   styleUrl: './libros.css',
 })
 export class Libros implements OnInit {
+  private servicio = inject(LibrosService);
+  auth = inject(Auth);
   libros = signal<any[]>([]);
-  respuesta = signal<any>(null);
-  seleccionado = signal<any>(null);
   pagina = signal(0);
   totalPaginas = signal(0);
-  id = 1;
-  texto = 'garcia';
-  cuerpo = '{"titulo":"Rayuela","isbn":"222","anio":1963,"autorId":1}';
+  aviso = signal('');
+  seleccionado = signal<any>(null);
+  formulario = { id: null as number | null, titulo: '', isbn: '', anio: null as number | null, autorId: null as number | null };
+  texto = '';
+  filtro = '';
 
-  constructor(private librosService: LibrosService) {}
-
-  ngOnInit(): void {
-    this.listar(0);
-  }
+  ngOnInit(): void { this.listar(0); }
 
   listar(numero: number): void {
-    this.seleccionado.set(null);
-    this.librosService.listar(numero).subscribe((resultado: any) => {
-      this.libros.set(resultado.content);
-      this.pagina.set(resultado.number);
-      this.totalPaginas.set(resultado.totalPages);
-      this.respuesta.set(resultado);
+    const peticion = this.filtro ? this.servicio.buscar(this.filtro, numero) : this.servicio.listar(numero);
+    peticion.subscribe({
+      next: (resultado: any) => {
+        this.libros.set(resultado.content);
+        this.pagina.set(resultado.number);
+        this.totalPaginas.set(resultado.totalPages);
+      },
+      error: () => this.aviso.set('No se pudo cargar la lista. Revisa la conexión y la sesión.'),
     });
   }
 
   buscar(): void {
+    this.filtro = this.texto.trim();
+    this.listar(0);
+  }
+
+  nuevo(): void {
+    this.formulario = { id: null as number | null, titulo: '', isbn: '', anio: null as number | null, autorId: null as number | null };
     this.seleccionado.set(null);
-    this.librosService.buscar(this.texto, 0).subscribe((resultado: any) => {
-      this.libros.set(resultado.content);
-      this.pagina.set(resultado.number);
-      this.totalPaginas.set(resultado.totalPages);
-      this.respuesta.set(resultado);
-    });
   }
 
-  buscarUno(): void {
-    this.librosService.buscarUno(this.id).subscribe((resultado: any) => {
-      this.respuesta.set(resultado);
-    });
-  }
-
-  ver(libro: any): void {
-    this.seleccionado.set(libro);
-  }
-
-  cerrar(): void {
-    this.seleccionado.set(null);
+  editar(registro: any): void {
+    this.formulario = {
+      id: registro.id,
+      titulo: registro.titulo ?? '',
+      isbn: registro.isbn ?? '',
+      anio: registro.anio ?? null,
+      autorId: registro.autorId ?? null,
+    };
+    this.aviso.set('Editando el registro ' + registro.id);
   }
 
   guardar(): void {
-    this.librosService.guardar(JSON.parse(this.cuerpo)).subscribe(() => {
-      this.listar(0);
+    const datos = { ...this.formulario, isbn: this.formulario.isbn || null };
+    this.servicio.guardar(datos).subscribe({
+      next: () => {
+        this.nuevo();
+        this.aviso.set('Registro guardado.');
+        this.listar(0);
+      },
+      error: () => this.aviso.set('No se pudo guardar. Revisa los campos, el ISBN y que exista el autor.'),
     });
   }
 
-  eliminar(): void {
-    this.librosService.eliminar(this.id).subscribe(() => {
-      this.listar(0);
+  eliminar(id: number): void {
+    if (!confirm('¿Eliminar el registro ' + id + '?')) return;
+    this.servicio.eliminar(id).subscribe({
+      next: () => {
+        this.nuevo();
+        this.aviso.set('Registro eliminado.');
+        this.listar(0);
+      },
+      error: () => this.aviso.set('No se pudo eliminar. Puede tener registros relacionados o no tener permisos.'),
     });
   }
 }
