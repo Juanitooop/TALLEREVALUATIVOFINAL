@@ -13,10 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-/**
- *
- * @author alber
- */
+
 @Entity
 @Table(name = "libros")
 public class Libro {

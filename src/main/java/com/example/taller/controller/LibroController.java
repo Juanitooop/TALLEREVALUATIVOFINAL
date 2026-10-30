@@ -19,24 +19,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author alber
- */
+
 @RestController
-@RequestMapping("/libros")
+@RequestMapping("/libros") //Aqui llega mi peticion de angular
 public class LibroController {
         
     @Autowired
     LibroService libroService;
     
   
-    @GetMapping
+    @GetMapping //GET consulta
     public Page<LibroDto> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return libroService.getLibros(page, size).map(libro -> LibroDto.fromEntity(libro));
     }
     
-    @GetMapping("/buscar")
+    @GetMapping("/buscar") 
     public Page<LibroDto> buscar(@RequestParam("texto") String texto, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
         return libroService.buscar(texto, page, size).map(libro -> LibroDto.fromEntity(libro));
     }
@@ -46,12 +43,12 @@ public class LibroController {
         return libroService.getLibro(libroId).map(libro -> LibroDto.fromEntity(libro));
     }
     
-    @PostMapping
+    @PostMapping //POST guarda o actualiza
     public void saveOrUpdate(@Valid @RequestBody LibroDto libroDto){
         libroService.saveOrUpdate(libroDto.toEntity());
     }
     
-    @DeleteMapping("/{libroId}")
+    @DeleteMapping("/{libroId}") //DELETE elimina
     public void delete(@PathVariable("libroId") Long libroId){
         libroService.delete(libroId);
     }

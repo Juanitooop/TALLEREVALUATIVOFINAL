@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-/**
- *
- * @author alber
- */
+
 @RestController
 @RequestMapping("/prestamos")
 public class PrestamoController {

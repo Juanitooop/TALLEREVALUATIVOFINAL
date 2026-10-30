@@ -14,10 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 
-/**
- *
- * @author alber
- */
+
 @Entity
 @Table(name = "prestamos")
 public class Prestamo {

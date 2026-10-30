@@ -13,10 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * @author alber
- */
+
 @Service
 public class UsuarioService {
     @Autowired

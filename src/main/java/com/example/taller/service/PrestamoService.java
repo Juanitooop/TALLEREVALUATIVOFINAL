@@ -12,10 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * @author alber
- */
+
 @Service
 public class PrestamoService {
     @Autowired

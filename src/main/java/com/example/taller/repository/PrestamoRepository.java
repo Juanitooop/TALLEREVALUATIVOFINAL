@@ -7,10 +7,7 @@ package com.example.taller.repository;
 import com.example.taller.entity.Prestamo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-/**
- *
- * @author alber
- */
+
 public interface PrestamoRepository extends JpaRepository<Prestamo, Long>{
     
 }

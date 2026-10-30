@@ -9,10 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import java.time.LocalDate;
 
-/**
- *
- * @author alber
- */
+
 public class AutorDto {
     private Long id;
     

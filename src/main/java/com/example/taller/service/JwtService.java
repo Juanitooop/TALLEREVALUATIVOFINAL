@@ -19,7 +19,7 @@ public class JwtService {
     private final JwtEncoder encoder;
     private final Duration vigencia;
 
-    //"${app.jwt.vigencia}" --> eso es nuevo. Con eso lo trae del .properties
+    //"${app.jwt.vigencia}" --> eso es nuevo. Con eso lo trae del .properties !!!!
     public JwtService(JwtEncoder encoder, @Value("${app.jwt.vigencia}") Long minutos) {
         this.encoder = encoder;
         this.vigencia = Duration.ofMinutes(minutos);

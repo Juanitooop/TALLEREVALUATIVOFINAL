@@ -10,10 +10,7 @@ import com.example.taller.entity.Usuario;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-/**
- *
- * @author alber
- */
+
 public class UsuarioDto {
     private Long id;
     

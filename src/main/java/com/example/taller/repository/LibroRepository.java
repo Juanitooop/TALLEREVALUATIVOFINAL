@@ -11,10 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-/**
- *
- * @author alber
- */
+
 public interface LibroRepository extends JpaRepository<Libro, Long>{
     
     //tocó hacer esta consulta para la paginacion que la profe pidió en los requisitos. Puro sql

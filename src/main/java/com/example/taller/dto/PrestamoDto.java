@@ -8,10 +8,6 @@ import com.example.taller.entity.Prestamo;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-/**
- *
- * @author alber
- */
 public class PrestamoDto {
     private Long id;
     

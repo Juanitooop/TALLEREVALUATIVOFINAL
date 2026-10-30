@@ -8,10 +8,7 @@ import com.example.taller.entity.Libro;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-/**
- *
- * @author alber
- */
+
 public class LibroDto {
     private Long id;
     

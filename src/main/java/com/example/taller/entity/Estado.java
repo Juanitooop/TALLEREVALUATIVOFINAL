@@ -4,10 +4,7 @@
  */
 package com.example.taller.entity;
 
-/**
- *
- * @author alber
- */
+
 public enum Estado {
     ACTIVO,
     INACTIVO

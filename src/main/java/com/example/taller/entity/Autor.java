@@ -11,10 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 
-/**
- *
- * @author alber
- */
+
 @Entity
 @Table(name = "autores")
 public class Autor {

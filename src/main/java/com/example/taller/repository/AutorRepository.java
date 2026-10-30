@@ -7,10 +7,6 @@ package com.example.taller.repository;
 import com.example.taller.entity.Autor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-/**
- *
- * @author alber
- */
 public interface AutorRepository extends JpaRepository<Autor, Long>{
     
 }
