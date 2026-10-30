@@ -1,0 +1,560 @@
+{
+  "info": {
+    "name": "Consulta individual de prestamos - ADMIN y dos LECTORES",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Solo login y consultas. No crea, actualiza ni elimina registros. Requiere dos lectores existentes y un préstamo de cada uno. Completar variables locales. Esta colección no se ha ejecutado contra datos reales: falta el segundo lector y los préstamos."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "email_admin",
+      "value": "admin@biblioteca.com"
+    },
+    {
+      "key": "password_admin",
+      "value": ""
+    },
+    {
+      "key": "email_lectorA",
+      "value": "lector@biblioteca.com"
+    },
+    {
+      "key": "password_lectorA",
+      "value": ""
+    },
+    {
+      "key": "email_lectorB",
+      "value": ""
+    },
+    {
+      "key": "password_lectorB",
+      "value": ""
+    },
+    {
+      "key": "prestamoA",
+      "value": ""
+    },
+    {
+      "key": "prestamoB",
+      "value": ""
+    },
+    {
+      "key": "inexistente",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Login admin",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email_admin}}\",\n  \"password\": \"{{password_admin}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.unset(\"token_admin\");",
+              "if (!pm.variables.get(\"password_admin\") || !pm.variables.get(\"email_admin\")) throw new Error(\"Completa el email y la contraseña de admin en tus variables locales.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Login correcto y rol ADMIN\", function () {",
+              "  pm.response.to.have.status(200);",
+              "  const datos = pm.response.json();",
+              "  pm.expect(datos.rol).to.eql(\"ADMIN\");",
+              "  pm.expect(datos.token).to.be.a(\"string\").and.not.empty;",
+              "  pm.collectionVariables.set(\"token_admin\", datos.token);",
+              "  pm.collectionVariables.set(\"id_admin\", datos.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login lectorA",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email_lectorA}}\",\n  \"password\": \"{{password_lectorA}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.unset(\"token_lectorA\");",
+              "if (!pm.variables.get(\"password_lectorA\") || !pm.variables.get(\"email_lectorA\")) throw new Error(\"Completa el email y la contraseña de lectorA en tus variables locales.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Login correcto y rol LECTOR\", function () {",
+              "  pm.response.to.have.status(200);",
+              "  const datos = pm.response.json();",
+              "  pm.expect(datos.rol).to.eql(\"LECTOR\");",
+              "  pm.expect(datos.token).to.be.a(\"string\").and.not.empty;",
+              "  pm.collectionVariables.set(\"token_lectorA\", datos.token);",
+              "  pm.collectionVariables.set(\"id_lectorA\", datos.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login lectorB",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email_lectorB}}\",\n  \"password\": \"{{password_lectorB}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/auth/login"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.unset(\"token_lectorB\");",
+              "if (!pm.variables.get(\"password_lectorB\") || !pm.variables.get(\"email_lectorB\")) throw new Error(\"Completa el email y la contraseña de lectorB en tus variables locales.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Login correcto y rol LECTOR\", function () {",
+              "  pm.response.to.have.status(200);",
+              "  const datos = pm.response.json();",
+              "  pm.expect(datos.rol).to.eql(\"LECTOR\");",
+              "  pm.expect(datos.token).to.be.a(\"string\").and.not.empty;",
+              "  pm.expect(String(datos.id)).not.to.eql(String(pm.collectionVariables.get(\"id_lectorA\")));",
+              "  pm.collectionVariables.set(\"token_lectorB\", datos.token);",
+              "  pm.collectionVariables.set(\"id_lectorB\", datos.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "200 - ADMIN consulta préstamo A",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_admin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{prestamoA}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_admin\") || !pm.variables.get(\"prestamoA\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"ADMIN consulta préstamo A: HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Es el préstamo y propietario esperados\", function () {",
+              "  pm.expect(String(pm.response.json().id)).to.eql(String(pm.variables.get(\"prestamoA\")));",
+              "  pm.expect(String(pm.response.json().usuarioId)).to.eql(String(pm.collectionVariables.get(\"id_lectorA\")));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "200 - ADMIN consulta préstamo B",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_admin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{prestamoB}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_admin\") || !pm.variables.get(\"prestamoB\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"ADMIN consulta préstamo B: HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Es el préstamo y propietario esperados\", function () {",
+              "  pm.expect(String(pm.response.json().id)).to.eql(String(pm.variables.get(\"prestamoB\")));",
+              "  pm.expect(String(pm.response.json().usuarioId)).to.eql(String(pm.collectionVariables.get(\"id_lectorB\")));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "200 - LECTOR A consulta el suyo",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_lectorA}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{prestamoA}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_lectorA\") || !pm.variables.get(\"prestamoA\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"LECTOR A consulta el suyo: HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Es el préstamo y propietario esperados\", function () {",
+              "  pm.expect(String(pm.response.json().id)).to.eql(String(pm.variables.get(\"prestamoA\")));",
+              "  pm.expect(String(pm.response.json().usuarioId)).to.eql(String(pm.collectionVariables.get(\"id_lectorA\")));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "200 - LECTOR B consulta el suyo",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_lectorB}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{prestamoB}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_lectorB\") || !pm.variables.get(\"prestamoB\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"LECTOR B consulta el suyo: HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Es el préstamo y propietario esperados\", function () {",
+              "  pm.expect(String(pm.response.json().id)).to.eql(String(pm.variables.get(\"prestamoB\")));",
+              "  pm.expect(String(pm.response.json().usuarioId)).to.eql(String(pm.collectionVariables.get(\"id_lectorB\")));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "403 - LECTOR A consulta préstamo ajeno",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_lectorA}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{prestamoB}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_lectorA\") || !pm.variables.get(\"prestamoB\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"LECTOR A consulta préstamo ajeno: HTTP 403\", function () { pm.response.to.have.status(403); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "403 - LECTOR B consulta préstamo ajeno",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_lectorB}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{prestamoA}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_lectorB\") || !pm.variables.get(\"prestamoA\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"LECTOR B consulta préstamo ajeno: HTTP 403\", function () { pm.response.to.have.status(403); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "404 - ADMIN consulta inexistente",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_admin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{inexistente}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_admin\") || !pm.variables.get(\"inexistente\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"ADMIN consulta inexistente: HTTP 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "404 - LECTOR A consulta inexistente",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_lectorA}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{inexistente}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_lectorA\") || !pm.variables.get(\"inexistente\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"LECTOR A consulta inexistente: HTTP 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "404 - LECTOR B consulta inexistente",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token_lectorB}}",
+              "type": "string"
+            }
+          ]
+        },
+        "url": "{{baseUrl}}/prestamos/{{inexistente}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"token_lectorB\") || !pm.variables.get(\"inexistente\")) throw new Error(\"Completa los IDs de préstamos existentes y ejecuta los logins primero.\");"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"LECTOR B consulta inexistente: HTTP 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

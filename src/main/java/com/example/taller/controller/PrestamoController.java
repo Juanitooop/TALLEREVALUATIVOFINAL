@@ -10,7 +10,7 @@ import com.example.taller.entity.Usuario;
 import com.example.taller.repository.UsuarioRepository;
 import com.example.taller.service.PrestamoService;
 import jakarta.validation.Valid;
-import java.util.Optional;
+import com.example.taller.entity.Prestamo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -43,8 +43,21 @@ public class PrestamoController {
     
 
     @GetMapping("/{prestamoId}")
-    public Optional<PrestamoDto> getOne(@PathVariable("prestamoId") Long prestamoId){
-        return prestamoService.getPrestamo(prestamoId).map(prestamo -> PrestamoDto.fromEntity(prestamo));
+    public PrestamoDto getOne(@PathVariable("prestamoId") Long prestamoId, JwtAuthenticationToken jwt){
+        // Primero comprobamos si existe: un ID inexistente devuelve 404.
+        Prestamo prestamo = prestamoService.getPrestamo(prestamoId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prestamo no encontrado"));
+
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(jwt.getToken().getSubject())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+
+        // ADMIN puede consultar cualquiera; LECTOR solo puede consultar uno suyo.
+        if (usuario.getRol() != Rol.ADMIN
+                && (usuario.getRol() != Rol.LECTOR || !usuario.getId().equals(prestamo.getUsuarioId()))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No puedes consultar este prestamo");
+        }
+
+        return PrestamoDto.fromEntity(prestamo);
     }
     
     @PostMapping

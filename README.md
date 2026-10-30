@@ -1,6 +1,6 @@
 # Biblioteca — Taller evaluativo
 
-Abre en VS Code esta carpeta, la que contiene pom.xml, src, frontend y db.
+Abrir en VS Code esta carpeta, la que contiene pom.xml, src, frontend y db.
 
 También puedes abrir Biblioteca.code-workspace, ubicado en la carpeta exterior.
 
@@ -10,13 +10,12 @@ También puedes abrir Biblioteca.code-workspace, ubicado en la carpeta exterior.
 - [Enunciado transcrito](docs/requerimientos.md)
 
 ## Inicio
-1. XAMPP: inicia MySQL (y Apache si usarás phpMyAdmin).
-2. Importa db/preparar_sin_borrar.sql. El SQL original taller_evaluativo.sql BORRA tablas.
+1. XAMPP: inicio MySQL (y Apache si usos phpMyAdmin).
+2. Importar db/preparar_sin_borrar.sql. El SQL original taller_evaluativo.sql BORRA tablas.
 3. Terminal backend: `mvn spring-boot:run`, con JDK 21 o compatible.
 4. Otra terminal: `cd frontend`, `npm.cmd install`, `npm.cmd start`.
-5. Abre http://localhost:4200.
+5. Abrir http://localhost:4200.
 
-En este equipo Java del PATH era 17 y Maven no estaba en PATH. La guía completa incluye las rutas de las instalaciones encontradas y los comandos exactos.
 
 Usuarios de demostración: admin@biblioteca.com / admin123 y lector@biblioteca.com / lector123.
 No necesitas colocar el proyecto en htdocs. Angular usa 4200, Spring Boot 8080 y MySQL/MariaDB 3306.
