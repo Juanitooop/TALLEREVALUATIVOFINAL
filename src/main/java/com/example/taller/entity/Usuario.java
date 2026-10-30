@@ -13,10 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- *
- * @author alber
- */
+
 @Entity
 @Table(name = "usuarios")
 public class Usuario {

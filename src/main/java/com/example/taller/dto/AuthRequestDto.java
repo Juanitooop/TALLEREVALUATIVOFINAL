@@ -6,10 +6,7 @@ package com.example.taller.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-/**
- *
- * @author alber
- */
+
 public class AuthRequestDto {
     @NotBlank(message  = "El campo no puede estar vacío")
     private String email;
